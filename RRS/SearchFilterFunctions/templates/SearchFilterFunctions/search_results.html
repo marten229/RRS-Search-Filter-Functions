@@ -1,0 +1,45 @@
+<!-- SearchFilterFunctions/templates/SearchFilterFunctions/search_results.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Restaurant Search</title>
+</head>
+<body>
+    <h1>Search Restaurants</h1>
+    <form method="get" action="{% url 'search_restaurants' %}">
+        <input type="text" name="q" placeholder="Search..." value="{{ query }}">
+        <input type="text" name="city" placeholder="City" value="{{ city }}">
+        <select name="cuisine">
+            <option value="">Select Cuisine</option>
+            <option value="Italian" {% if cuisine == "Italian" %}selected{% endif %}>Italian</option>
+            <option value="Chinese" {% if cuisine == "Chinese" %}selected{% endif %}>Chinese</option>
+            <option value="Mexican" {% if cuisine == "Mexican" %}selected{% endif %}>Mexican</option>
+            <option value="Indian" {% if cuisine == "Indian" %}selected{% endif %}>Indian</option>
+            <option value="French" {% if cuisine == "French" %}selected{% endif %}>French</option>
+            <option value="Japanese" {% if cuisine == "Japanese" %}selected{% endif %}>Japanese</option>
+            <option value="Thai" {% if cuisine == "Thai" %}selected{% endif %}>Thai</option>
+            <option value="Other" {% if cuisine == "Other" %}selected{% endif %}>Other</option>
+        </select>
+        <label>
+            <input type="checkbox" name="available" value="true" {% if available == "true" %}checked{% endif %}> Available
+        </label>
+        <button type="submit">Search</button>
+    </form>
+
+    <h2>Results</h2>
+    <ul>
+        {% for restaurant in restaurants %}
+            <li>
+                <h3>{{ restaurant.name }}</h3>
+                <p>{{ restaurant.description }}</p>
+                <p>City: {{ restaurant.city }}</p>
+                <p>Cuisine: {{ restaurant.cuisine }}</p>
+                <p>Rating: {{ restaurant.rating }}</p>
+                <p>Available: {{ restaurant.available }}</p>
+            </li>
+        {% empty %}
+            <li>No restaurants found</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
