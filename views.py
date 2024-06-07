@@ -1,33 +1,26 @@
 from django.shortcuts import render
-from SearchFilterFunctions.models import Restaurant
+from SearchFilterFunctions.models import Restaurant, Cuisine
 from django.db.models import Q
 
 def search_restaurants(request):
-    query = request.GET.get('q', '')
-    city = request.GET.get('city', '')
-    cuisine = request.GET.get('cuisine', '')
-    available = request.GET.get('available', '')
+    query = request.GET.get('q')
+    cuisines = request.GET.getlist('cuisines')
 
-    restaurants = Restaurant.objects.all()
-
-    if query:
-        restaurants = restaurants.filter(Q(name__icontains=query) | Q(description__icontains=query))
+    filters = Q()
     
-    if city:
-        restaurants = restaurants.filter(city__iexact=city)
+    if query:
+        filters &= Q(name__icontains=query) | Q(description__icontains=query) | Q(address__icontains=query)
+    
+    if cuisines:
+        filters &= Q(cuisines__id__in=cuisines)
 
-    if cuisine:
-        restaurants = restaurants.filter(cuisine__iexact=cuisine)
-
-    if available:
-        restaurants = restaurants.filter(available=(available.lower() == 'true'))
-
-    context = {
-        'restaurants': restaurants,
+    results = Restaurant.objects.filter(filters).distinct()
+    
+    all_cuisines = Cuisine.objects.all()
+    
+    return render(request, 'SearchFilterFunctions/search_results.html', {
+        'results': results,
+        'all_cuisines': all_cuisines,
+        'selected_cuisines': cuisines,
         'query': query,
-        'city': city,
-        'cuisine': cuisine,
-        'available': available,
-    }
-
-    return render(request, 'SearchFilterFunctions/search_results.html', context)
+    })

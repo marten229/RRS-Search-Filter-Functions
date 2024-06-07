@@ -1,4 +1,4 @@
-<!-- SearchFilterFunctions/templates/SearchFilterFunctions/search_results.html -->
+<!-- In search/templates/search/results.html -->
 <!DOCTYPE html>
 <html>
 <head>
@@ -8,37 +8,34 @@
     <h1>Search Restaurants</h1>
     <form method="get" action="{% url 'search_restaurants' %}">
         <input type="text" name="q" placeholder="Search..." value="{{ query }}">
-        <input type="text" name="city" placeholder="City" value="{{ city }}">
-        <select name="cuisine">
-            <option value="">Select Cuisine</option>
-            <option value="Italian" {% if cuisine == "Italian" %}selected{% endif %}>Italian</option>
-            <option value="Chinese" {% if cuisine == "Chinese" %}selected{% endif %}>Chinese</option>
-            <option value="Mexican" {% if cuisine == "Mexican" %}selected{% endif %}>Mexican</option>
-            <option value="Indian" {% if cuisine == "Indian" %}selected{% endif %}>Indian</option>
-            <option value="French" {% if cuisine == "French" %}selected{% endif %}>French</option>
-            <option value="Japanese" {% if cuisine == "Japanese" %}selected{% endif %}>Japanese</option>
-            <option value="Thai" {% if cuisine == "Thai" %}selected{% endif %}>Thai</option>
-            <option value="Other" {% if cuisine == "Other" %}selected{% endif %}>Other</option>
-        </select>
-        <label>
-            <input type="checkbox" name="available" value="true" {% if available == "true" %}checked{% endif %}> Available
-        </label>
+        
+        <h3>Cuisines</h3>
+        {% for cuisine in all_cuisines %}
+            <label>
+                <input type="checkbox" name="cuisines" value="{{ cuisine.id }}"
+                {% if cuisine.id|stringformat:"s" in selected_cuisines %}checked{% endif %}>
+                {{ cuisine.name }}
+            </label><br>
+        {% endfor %}
+        
         <button type="submit">Search</button>
     </form>
 
     <h2>Results</h2>
     <ul>
-        {% for restaurant in restaurants %}
+        {% for restaurant in results %}
             <li>
                 <h3>{{ restaurant.name }}</h3>
                 <p>{{ restaurant.description }}</p>
-                <p>City: {{ restaurant.city }}</p>
-                <p>Cuisine: {{ restaurant.cuisine }}</p>
-                <p>Rating: {{ restaurant.rating }}</p>
-                <p>Available: {{ restaurant.available }}</p>
+                <p><strong>Address:</strong> {{ restaurant.address }}</p>
+                <p><strong>Contact:</strong> {{ restaurant.contact_phone }} | {{ restaurant.contact_email }}</p>
+                <p><strong>Opening Hours:</strong> {{ restaurant.opening_hours }}</p>
+                <p><strong>Cuisines:</strong> {{ restaurant.cuisines.all|join:", " }}</p>
+                <p><strong>Menu:</strong> {{ restaurant.menu }}</p>
+                {% if restaurant.photo %}
+                    <img src="{{ restaurant.photo.url }}" alt="{{ restaurant.name }}">
+                {% endif %}
             </li>
-        {% empty %}
-            <li>No restaurants found</li>
         {% endfor %}
     </ul>
 </body>
