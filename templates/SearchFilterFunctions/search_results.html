@@ -1,8 +1,12 @@
-<!-- In search/templates/search/results.html -->
+<!-- search_restaurants.html -->
+
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Restaurant Search</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load static %}
+    <title>Search Restaurants</title>
 </head>
 <body>
     <h1>Search Restaurants</h1>
@@ -33,9 +37,11 @@
                 <p><strong>Cuisines:</strong> {{ restaurant.cuisines.all|join:", " }}</p>
                 <p><strong>Menu:</strong> {{ restaurant.menu }}</p>
                 {% if restaurant.photo %}
-                    <img src="{{ restaurant.photo.url }}" alt="{{ restaurant.name }}">
+                    <img src="{% static restaurant.photo %}" alt="{{ restaurant.name }}">
                 {% endif %}
             </li>
+        {% empty %}
+            <li>No restaurants found.</li>
         {% endfor %}
     </ul>
 </body>
