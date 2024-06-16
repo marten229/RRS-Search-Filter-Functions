@@ -63,21 +63,23 @@
                             <div class="restaurant-grid">
                                 {% for restaurant in results %}
                                     <div class="card mb-3">
-                                        <div class="card-img-overlay">
-                                            {% if restaurant.photo %}
-                                                <img src="{% static restaurant.photo %}" alt="{{ restaurant.name }}">
-                                            {% endif %}
-                                        </div>
-                                        <div class="card-body p-3">
-                                            <h6 class="card-title mb-1">{{ restaurant.name }}</h6>
-                                            <div class="restaurant-category mb-1">
-                                                <i class="fas fa-utensils pr-2"></i> {{ restaurant.cuisines.all|join:", " }}
+                                        <a href="{% url 'restaurant-detail' restaurant.pk %}">
+                                            <div class="card-img-overlay">
+                                                {% if restaurant.photo %}
+                                                    <img src="{% static restaurant.photo %}" alt="{{ restaurant.name }}">
+                                                {% endif %}
                                             </div>
-                                            <span class="badge badge-pill badge-danger font-weight-normal">
-                                                {{ restaurant.rating }}
-                                                <i class="fas fa-star fa-xs"></i>
-                                            </span>
-                                        </div>
+                                            <div class="card-body p-3">
+                                                <h6 class="card-title mb-1">{{ restaurant.name }}</h6>
+                                                <div class="restaurant-category mb-1">
+                                                    <i class="fas fa-utensils pr-2"></i> {{ restaurant.cuisines.all|join:", " }}
+                                                </div>
+                                                <span class="badge badge-pill badge-danger font-weight-normal">
+                                                    {{ restaurant.rating }}
+                                                    <i class="fas fa-star fa-xs"></i>
+                                                </span>
+                                            </div>
+                                        </a>
                                     </div>
                                 {% empty %}
                                     <p>Keine Restaurants gefunden.</p>
