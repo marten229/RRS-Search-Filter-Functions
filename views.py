@@ -47,4 +47,3 @@ def search_results(request):
         'results': results,
         'all_cuisines': all_cuisines,  # Hier all_cuisines übergeben
     })
-

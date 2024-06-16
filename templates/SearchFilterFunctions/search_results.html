@@ -1,48 +1,94 @@
-<!-- search_restaurants.html -->
-
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     {% load static %}
-    <title>Search Restaurants</title>
+    <title>Restaurant Liste</title>
+    <link rel="stylesheet" href="{% static 'stylesearch.css' %}">
 </head>
 <body>
-    <h1>Search Restaurants</h1>
-    <form method="get" action="{% url 'search_restaurants' %}">
-        <input type="text" name="q" placeholder="Search..." value="{{ query }}">
-        
-        <h3>Cuisines</h3>
-        {% for cuisine in all_cuisines %}
-            <label>
-                <input type="checkbox" name="cuisines" value="{{ cuisine.id }}"
-                {% if cuisine.id|stringformat:"s" in selected_cuisines %}checked{% endif %}>
-                {{ cuisine.name }}
-            </label><br>
-        {% endfor %}
-        
-        <button type="submit">Search</button>
-    </form>
+    <div class="grid-container">
+        <header>
+            <nav class="nav">
+                <i class="uil uil-bars navOpenBtn"></i>
+                <a href="#" class="logo">RestaurantSearch</a>
+                <ul class="nav-links">
+                  <i class="uil uil-times navCloseBtn"></i>
+                  <li><a href="#">Home</a></li>
+                  <li><a href="#">Tisch Buchen</a></li>
+                  <li><a href="#">Unternehmer</a></li>
+                  <li><a href="#">Kritik</a></li>
+                  <li><a href="#">Manager</a></li>
+                </ul>
+                <i class="uil uil-search search-icon" id="searchIcon"></i>
+                <div class="search-box">      
+                  <form action="{% url 'search_results' %}" method="GET">
+                    <input type="text" name="query" placeholder="Search here..." required ></input>
+                  </form>
+                </div>
+              </nav>
+        </header>
+        <div class="banner"></div>
+            <form method="get" action="{% url 'search_restaurants' %}">
+                <div class="container search-bar">
+                    <div class="search-bar-outer">
+                        <div class="search-bar-inner">
+                                <h4 class="mb-2">Dein Restaurant</h4>
+                                <div class="input-group">
+                                    <form action="{% url 'search_results' %}" method="GET">
+                                        <input type="text" name="query" placeholder="Search..." value="{{ query }}">
+                                    </form>
+                                    <div class="input-group-append">
+                                        <button class="btn btn-major" type="submit" id="search-button">Suchen</button>
+                                    </div>
+                                </div>
+                        </div>
+                        <div class="cuisine-filters mt-3">
+                            <h4>Küchenfilter</h4>
+                            {% for cuisine in all_cuisines %}
+                                <label>
+                                    <input type="checkbox" name="cuisines" value="{{ cuisine.id }}"
+                                    {% if cuisine.id|stringformat:"s" in selected_cuisines %}checked{% endif %}>
+                                    {{ cuisine.name }}
+                                </label>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
 
-    <h2>Results</h2>
-    <ul>
-        {% for restaurant in results %}
-            <li>
-                <h3>{{ restaurant.name }}</h3>
-                <p>{{ restaurant.description }}</p>
-                <p><strong>Address:</strong> {{ restaurant.address }}</p>
-                <p><strong>Contact:</strong> {{ restaurant.contact_phone }} | {{ restaurant.contact_email }}</p>
-                <p><strong>Opening Hours:</strong> {{ restaurant.opening_hours }}</p>
-                <p><strong>Cuisines:</strong> {{ restaurant.cuisines.all|join:", " }}</p>
-                <p><strong>Menu:</strong> {{ restaurant.menu }}</p>
-                {% if restaurant.photo %}
-                    <img src="{% static restaurant.photo %}" alt="{{ restaurant.name }}">
-                {% endif %}
-            </li>
-        {% empty %}
-            <li>No restaurants found.</li>
-        {% endfor %}
-    </ul>
+                <div class="container mt-5">
+                    <div class="row justify-content-center">
+                        <div class="col-md-9 col-12">
+                            <div class="restaurant-grid">
+                                {% for restaurant in results %}
+                                    <div class="card mb-3">
+                                        <div class="card-img-overlay">
+                                            {% if restaurant.photo %}
+                                                <img src="{% static restaurant.photo %}" alt="{{ restaurant.name }}">
+                                            {% endif %}
+                                        </div>
+                                        <div class="card-body p-3">
+                                            <h6 class="card-title mb-1">{{ restaurant.name }}</h6>
+                                            <div class="restaurant-category mb-1">
+                                                <i class="fas fa-utensils pr-2"></i> {{ restaurant.cuisines.all|join:", " }}
+                                            </div>
+                                            <span class="badge badge-pill badge-danger font-weight-normal">
+                                                {{ restaurant.rating }}
+                                                <i class="fas fa-star fa-xs"></i>
+                                            </span>
+                                        </div>
+                                    </div>
+                                {% empty %}
+                                    <p>Keine Restaurants gefunden.</p>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        <!-- Bootstrap JS and Font Awesome -->
+        
+    </div>
 </body>
 </html>
