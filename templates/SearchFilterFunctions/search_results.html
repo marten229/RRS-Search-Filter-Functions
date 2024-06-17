@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load static %}
+    <title>Restaurant Liste</title>
+    <link rel="stylesheet" href="{% static 'stylesearch.css' %}">
+    <style>
+        .nav-links a, .nav-links form {
+          color: #fff;
+          text-decoration: none;
+          padding: 0 10px;
+          display: inline-block;
+        }
+        .nav-links form {
+          padding: 0;
+        }
+        .nav-links form button {
+          background: none;
+          border: none;
+          padding: 0;
+          color: #fff;
+          text-decoration: none;
+          cursor: pointer;
+          font: inherit;
+        }
+        .nav-links form button:hover {
+          text-decoration: underline;
+        }
+      </style>
+</head>
+<body>
+    <div class="grid-container">
+        <header>
+            <nav class="nav">
+                <i class="uil uil-bars navOpenBtn"></i>
+                <a href="{% url 'startpage' %}" class="logo">RestaurantSearch</a>
+                <ul class="nav-links">
+                    <i class="uil uil-times navCloseBtn"></i>
+                    <li><a href="{% url 'startpage' %}">Home</a></li>
+                    <li><a href="{% url 'search_restaurants' %}">Tisch Buchen</a></li>
+                    {% if not user.is_authenticated %}
+                    <li><a href="{% url 'login' %}">Login</a></li>
+                    <li><a href="{% url 'register' %}">Registrieren</a></li>
+                    {% else %}
+                      {% if user.role == 'administrator' or user.role == 'restaurant_owner' or user.role == 'restaurant_staff' %}
+                      <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                      {% endif %}
+                      <li><a href="{% url 'reservation-list' %}">Meine Reservierungen</a></li>
+                      <li>
+                        <form id="logout-form" action="{% url 'logout' %}" method="post">
+                          {% csrf_token %}
+                          <button type="submit">Logout</button>
+                        </form>
+                      </li>
+                    {% endif %}
+                  </ul>
+                <i class="uil uil-search search-icon" id="searchIcon"></i>
+                <div class="search-box">      
+                  <form action="{% url 'search_results' %}" method="GET">
+                    <input type="text" name="query" placeholder="Search here..." required ></input>
+                  </form>
+                </div>
+              </nav>
+        </header>
+        <div class="banner">
+             <img src="banner/restaurants-list-cover-banner.jpg" weight="100%%"/>       
+        </div>
+            <form method="get" action="{% url 'search_restaurants' %}">
+                <div class="container search-bar">
+                    <div class="search-bar-outer">
+                        <div class="search-bar-inner">
+                                <h4 class="mb-2">Dein Restaurant</h4>
+                                <div class="input-group">
+                                    <form action="{% url 'search_results' %}" method="GET">
+                                        <input type="text" name="query" placeholder="Search..." value="{{ query }}">
+                                    </form>
+                                    <div class="input-group-append">
+                                        <button class="btn btn-major" type="submit" id="search-button">Suchen</button>
+                                    </div>
+                                </div>
+                        </div>
+                        <div class="cuisine-filters mt-3">
+                            <h4>Küchenfilter</h4>
+                            {% for cuisine in all_cuisines %}
+                                <label>
+                                    <input type="checkbox" name="cuisines" value="{{ cuisine.id }}"
+                                    {% if cuisine.id|stringformat:"s" in selected_cuisines %}checked{% endif %}>
+                                    {{ cuisine.name }}
+                                </label>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="container mt-5">
+                    <div class="row justify-content-center">
+                        <div class="col-md-9 col-12">
+                            <div class="restaurant-grid">
+                                {% for restaurant in results %}
+                                    <div class="card mb-3">
+                                        <a href="{% url 'restaurant-detail' restaurant.pk %}">
+                                            <div class="card-img-overlay">
+                                                {% if restaurant.photo %}
+                                                    <img src="{{restaurant.photo.url}}" alt="{{ restaurant.name }}">
+                                                {% endif %}
+                                            </div>
+                                            <div class="card-body p-3">
+                                                <h6 class="card-title mb-1">{{ restaurant.name }}</h6>
+                                                <div class="restaurant-category mb-1">
+                                                    <i class="fas fa-utensils pr-2"></i> {{ restaurant.cuisines.all|join:", " }}
+                                                </div>
+                                                <span class="badge badge-pill badge-danger font-weight-normal">
+                                                    {{ restaurant.rating }}
+                                                    <i class="fas fa-star fa-xs"></i>
+                                                </span>
+                                            </div>
+                                        </a>
+                                    </div>
+                                {% empty %}
+                                    <p>Keine Restaurants gefunden.</p>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        <!-- Bootstrap JS and Font Awesome -->
+        
+    </div>
+</body>
+</html>
