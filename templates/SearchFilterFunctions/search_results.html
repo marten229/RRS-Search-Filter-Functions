@@ -6,21 +6,55 @@
     {% load static %}
     <title>Restaurant Liste</title>
     <link rel="stylesheet" href="{% static 'stylesearch.css' %}">
+    <style>
+        .nav-links a, .nav-links form {
+          color: #fff;
+          text-decoration: none;
+          padding: 0 10px;
+          display: inline-block;
+        }
+        .nav-links form {
+          padding: 0;
+        }
+        .nav-links form button {
+          background: none;
+          border: none;
+          padding: 0;
+          color: #fff;
+          text-decoration: none;
+          cursor: pointer;
+          font: inherit;
+        }
+        .nav-links form button:hover {
+          text-decoration: underline;
+        }
+      </style>
 </head>
 <body>
     <div class="grid-container">
         <header>
             <nav class="nav">
                 <i class="uil uil-bars navOpenBtn"></i>
-                <a href="#" class="logo">RestaurantSearch</a>
+                <a href="{% url 'startpage' %}" class="logo">RestaurantSearch</a>
                 <ul class="nav-links">
-                  <i class="uil uil-times navCloseBtn"></i>
-                  <li><a href="#">Home</a></li>
-                  <li><a href="#">Tisch Buchen</a></li>
-                  <li><a href="#">Unternehmer</a></li>
-                  <li><a href="#">Kritik</a></li>
-                  <li><a href="#">Manager</a></li>
-                </ul>
+                    <i class="uil uil-times navCloseBtn"></i>
+                    <li><a href="{% url 'startpage' %}">Home</a></li>
+                    <li><a href="{% url 'search_restaurants' %}">Tisch Buchen</a></li>
+                    {% if not user.is_authenticated %}
+                    <li><a href="{% url 'login' %}">Login</a></li>
+                    {% else %}
+                      {% if user.role == 'administrator' or user.role == 'restaurant_owner' or user.role == 'restaurant_staff' %}
+                      <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                      {% endif %}
+                      <li><a href="{% url 'reservation-list' %}">Meine Reservierungen</a></li>
+                      <li>
+                        <form id="logout-form" action="{% url 'logout' %}" method="post">
+                          {% csrf_token %}
+                          <button type="submit">Logout</button>
+                        </form>
+                      </li>
+                    {% endif %}
+                  </ul>
                 <i class="uil uil-search search-icon" id="searchIcon"></i>
                 <div class="search-box">      
                   <form action="{% url 'search_results' %}" method="GET">
