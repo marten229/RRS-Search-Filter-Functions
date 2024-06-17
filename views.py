@@ -40,10 +40,10 @@ def search_results(request):
 
     results = Restaurant.objects.filter(filters).distinct()
 
-    all_cuisines = Cuisine.objects.all()  # Hier Cuisines hinzugefügt
+    all_cuisines = Cuisine.objects.all()
 
     return render(request, 'SearchFilterFunctions/search_results.html', {
         'query': query,
         'results': results,
-        'all_cuisines': all_cuisines,  # Hier all_cuisines übergeben
+        'all_cuisines': all_cuisines, 
     })
